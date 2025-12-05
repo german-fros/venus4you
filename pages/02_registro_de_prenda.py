@@ -1,0 +1,50 @@
+import streamlit as st
+
+from config.config import CATEGORIAS_PRENDAS, FORMALIDADE_PRENDAS, CORES_PRENDAS, MATERIAIS_PRENDAS
+from src.domain.prenda import Prenda
+
+st.title('Adicionar nova prenda')
+
+if "guarda_roupas" not in st.session_state:
+    st.session_state.guarda_roupas = {}
+
+if "reset_form" not in st.session_state:
+    st.session_state.reset_form = False
+
+if st.session_state.reset_form:
+    st.session_state.form_categoria = None
+    st.session_state.form_material = None
+    st.session_state.form_cor = None
+    st.session_state.form_formalidade = None
+
+    st.session_state.reset_form = False
+
+with st.form("form_nova_prenda"):
+    categoria = st.selectbox("Categoría", CATEGORIAS_PRENDAS, index=None, key='form_categoria')
+    material = st.selectbox("Material", MATERIAIS_PRENDAS, index=None, accept_new_options=True, key='form_material')
+    cor = st.selectbox("Cor", CORES_PRENDAS, index=None, accept_new_options=True, key='form_cor')
+    formalidade = st.selectbox("Formalidade", FORMALIDADE_PRENDAS, index=None, key='form_formalidade')
+    imagem = st.file_uploader("Carregar imagem", type = ['jpg', 'png'], accept_multiple_files=False, key='form_imagem')
+
+    enviado = st.form_submit_button("Adicionar", type='primary')
+
+    if enviado:
+        if categoria and imagem:
+            prenda = Prenda(categoria=categoria, material=material, cor=cor, formalidade=formalidade, imagem=imagem)
+
+            st.session_state.guarda_roupas[prenda.id] = prenda
+
+            st.success('Prenda registrada com sucesso!')
+        
+        elif categoria:
+            st.warning("Deve adjuntar uma imagem da prenda!")
+
+        else:
+            st.warning("Deve especificar a categoria da prenda!")
+
+limpar_form = st.button("Limpar")
+
+if limpar_form:
+    st.session_state.reset_form = True
+
+    st.rerun()
