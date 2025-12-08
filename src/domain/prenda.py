@@ -1,8 +1,8 @@
-from config.config import CATEGORIAS_PRENDAS, FORMALIDADE_PRENDAS
+from config.config import CATEGORIAS_PRENDAS, FORMALIDADE_PRENDAS, PARTE_DO_CORPO_PRENDAS
 import uuid
 
 class Prenda():
-    def __init__(self, categoria, imagem, material=None, cor=None, formalidade=None):
+    def __init__(self, categoria, imagem, cor="Não especificado", formalidade="Não especificado"):
         if categoria.upper() not in CATEGORIAS_PRENDAS:
             raise ValueError(f"Categoria incorreta: {categoria}!")
         
@@ -12,10 +12,10 @@ class Prenda():
         self.id = uuid.uuid1()
         self.categoria = categoria
         self.imagem = imagem
-        self.material = material
         self.cor = cor
         self.formalidade = formalidade
+        self.parte_do_corpo = PARTE_DO_CORPO_PRENDAS[categoria]
 
     
     def __repr__(self):
-        return f"{self.categoria} | {self.material} | {self.cor} | {self.formalidade}"
+        return f"Cor: {self.cor}\nFormalidade: {self.formalidade}"
