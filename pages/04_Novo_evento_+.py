@@ -42,14 +42,18 @@ with st.form("form_novo_evento"):
 
     if enviado:
         if nome and data and horario and estado and cidade:
-            evento = Evento(nome=nome, formalidade=formalidade, data=data, horario=horario, estado=estado, cidade=cidade)
+            if datetime.combine(data, horario) < datetime.today():
+                st.warning("Data/horário selecionados são inválidos!")
 
-            if f"{evento.data}" not in st.session_state.eventos.keys():
-                st.session_state.eventos[f"{evento.data}"] = []
+            else:
+                evento = Evento(nome=nome, formalidade=formalidade, data=data, horario=horario, estado=estado, cidade=cidade)
 
-            st.session_state.eventos[f"{evento.data}"].append(evento)
+                if f"{evento.data}" not in st.session_state.eventos.keys():
+                    st.session_state.eventos[f"{evento.data}"] = []
 
-            st.success('Evento marcado com sucesso!')
+                st.session_state.eventos[f"{evento.data}"].append(evento)
+
+                st.success('Evento marcado com sucesso!')
         
         else:
             st.warning("Campos sem preencher!")

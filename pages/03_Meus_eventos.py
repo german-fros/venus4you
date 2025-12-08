@@ -38,7 +38,7 @@ if "eventos" in st.session_state and st.session_state.eventos:
                         else:
                             st.text('☀️')
             
-                with st.expander("Ver look escolhido"):
+                with st.expander("Ver look escolhido 🪞"):
                     if "prendas_por_parte" in st.session_state and st.session_state.prendas_por_parte:
                         cols = st.columns(3)
                         look = Look(st.session_state.prendas_por_parte)
