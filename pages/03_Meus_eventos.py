@@ -50,7 +50,7 @@ if "eventos" in st.session_state and st.session_state.eventos:
                                 st.image(prenda.imagem)
 
                     else:
-                        st.text("Registre mais prendas para montar o seu look!")
+                        st.text("Registre mais peças para montar o seu look!")
 
 
 else:

@@ -7,7 +7,7 @@ st.set_page_config(
 )
 
 if "guarda_roupas" in st.session_state and st.session_state.guarda_roupas:
-    st.title("Prendas registradas")
+    st.title("Peças registradas")
 
     prendas = list(st.session_state.guarda_roupas.values())
 
@@ -37,12 +37,12 @@ if "guarda_roupas" in st.session_state and st.session_state.guarda_roupas:
                     with st.container(border=True):
                         st.image(prenda.imagem)
             except IndexError:
-                raise(f"Columna fuera de rango: {col}")
+                raise(f"Coluna fora de rango: {col}")
 
 else:
     st.title("Seu guarda roupas está vazío 🪹")
 
-    adicionar_prenda = st.button("Registrar nova prenda ➕", type='primary')
+    adicionar_prenda = st.button("Registrar nova peça ➕", type='primary')
     if adicionar_prenda:
-        st.switch_page('pages/02_Nova_prenda_+.py')
+        st.switch_page('pages/02_Nova_peça_+.py')
 
