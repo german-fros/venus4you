@@ -1,7 +1,7 @@
 import streamlit as st
 from datetime import time, datetime, timedelta
 
-from config.config import CIDADES_RS_EVENTO, FORMALIDADE_PRENDAS
+from config.config import CIDADES_COORDS, FORMALIDADE_PRENDAS
 from src.domain.evento import Evento
 
 st.title('Agendar novo evento')
@@ -36,7 +36,7 @@ with st.form("form_novo_evento"):
     with cols[0]:
         estado = st.selectbox(label="Estado", options=['RS'], index=0, disabled=True, key="form_estado")
     with cols[1]:
-        cidade = st.selectbox(label="Cidade", options=CIDADES_RS_EVENTO, accept_new_options=False, index=None, key='form_cidade')
+        cidade = st.selectbox(label="Cidade", options=list(CIDADES_COORDS.keys()), accept_new_options=False, index=None, key='form_cidade')
 
     enviado = st.form_submit_button("Adicionar", type='primary')
 

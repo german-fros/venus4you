@@ -1,15 +1,32 @@
 from datetime import datetime, date, time
 import requests
 
-def obter_clima_para_evento(cidade: str, estado: str, data: date, horario: time):
+from config.config import CIDADES_COORDS
+
+
+def obter_lat_lon_cidade(cidade: str):
+    cidade_norm = cidade.strip().upper()
+    coords = CIDADES_COORDS.get(cidade_norm)
+
+    if coords is None:
+        # puedes devolver None y tratarlo arriba o lanzar excepción
+        raise ValueError(f"Cidade não cadastrada na base simulada: {cidade}")
+
+    return coords  # (lat, lon)
+
+
+def obter_clima_para_evento(cidade: str, data: date, horario: time):
     base_url = "https://api.open-meteo.com/v1/forecast"
 
-    lat, lon = obter_lat_lon_cidade(cidade, estado)
+    try:
+        lat, lon = obter_lat_lon_cidade(cidade)
+    except ValueError as e:
+        # en Streamlit pondrías st.warning(str(e)) y retornarias None
+        print(e)
+        return None
 
     data_hora = datetime.combine(data, horario)
-
-    # Usamos la misma fecha como start y end (solo ese día)
-    data_str = data_hora.date().isoformat()
+    data_str = data_hora.date().isoformat()  # yyyy-mm-dd
 
     params = {
         "latitude": lat,
@@ -22,9 +39,9 @@ def obter_clima_para_evento(cidade: str, estado: str, data: date, horario: time)
 
     resp = requests.get(base_url, params=params, timeout=10)
     resp.raise_for_status()
-    data = resp.json()
+    data_json = resp.json()
 
-    hourly = data.get("hourly", {})
+    hourly = data_json.get("hourly", {})
     times = hourly.get("time")
     temps = hourly.get("temperature_2m")
     pops = hourly.get("precipitation_probability")
@@ -33,13 +50,10 @@ def obter_clima_para_evento(cidade: str, estado: str, data: date, horario: time)
     if not times:
         return None
 
-    # Convertimos las horas de la API a datetime
     dt_times = [datetime.fromisoformat(t) for t in times]
 
-    # Normalizamos el evento a hora exacta (Open-Meteo devuelve en horas cerradas)
     target = data_hora.replace(minute=0, second=0, microsecond=0)
 
-    # Índice de la hora más cercana
     idx = min(range(len(dt_times)), key=lambda i: abs(dt_times[i] - target))
 
     return {
@@ -48,30 +62,3 @@ def obter_clima_para_evento(cidade: str, estado: str, data: date, horario: time)
         "precipitation_probability": pops[idx] if pops else None,
         "precipitation": precs[idx] if precs else None,
     }
-
-
-def obter_lat_lon_cidade(cidade: str, estado: str):
-    url = "https://nominatim.openstreetmap.org/search"
-
-    params = {
-        "q": f"{cidade} {estado}",
-        "format": "json",
-        "limit": 1,
-        "addressdetails": 0,
-    }
-    headers = {
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36"
-    }
-    
-    resp = requests.get(url, params=params, headers=headers, timeout=10)
-    resp.raise_for_status()
-    data = resp.json()
-
-    if not data:
-        return None
-
-    lat = float(data[0]["lat"])
-    lon = float(data[0]["lon"])
-
-    return lat, lon
-

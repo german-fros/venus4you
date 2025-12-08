@@ -23,7 +23,7 @@ if "eventos" in st.session_state and st.session_state.eventos:
                 with col2:
                     cols = st.columns(2)
                     with cols[0]:
-                        clima_evento = obter_clima_para_evento(evento.cidade, evento.estado, evento.data, evento.horario)
+                        clima_evento = obter_clima_para_evento(evento.cidade, evento.data, evento.horario)
                         st.text("PREVISÃO CLIMÁTICA")
 
                         st.text(f"Temperatura: {clima_evento['temperature']}°C\nProb. chuva: {clima_evento['precipitation_probability']}%")
