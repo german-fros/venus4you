@@ -1,10 +1,10 @@
 import streamlit as st
-from datetime import time
+from datetime import time, datetime, timedelta
 
 from config.config import CIDADES_RS_EVENTO, FORMALIDADE_PRENDAS
 from src.domain.evento import Evento
 
-st.title('Marcar novo evento')
+st.title('Agendar novo evento')
 
 if "eventos" not in st.session_state:
     st.session_state.eventos = {}
@@ -23,10 +23,20 @@ if st.session_state.reset_event_form:
 with st.form("form_novo_evento"):
     nome = st.text_input("Nome", key='form_nome')
     formalidade = st.selectbox("Formalidade", options=FORMALIDADE_PRENDAS, index=1,  key="form_formalidade")
-    data = st.date_input('Data', min_value='today', key='form_data')
-    horario = st.time_input('Horario', step=1800, value=time(12,00),key='form_hora')
-    estado = st.selectbox(label="Estado", options=['RS'], index=0, disabled=True, key="form_estado")
-    cidade = st.selectbox(label="Cidade", options=CIDADES_RS_EVENTO, accept_new_options=False, index=None, key='form_cidade')
+
+    daqui_a_7_dias = datetime.today() + timedelta(7)
+
+    cols = st.columns(2)
+    with cols[0]:
+        data = st.date_input('Data', min_value='today', max_value = daqui_a_7_dias, key='form_data')
+    with cols[1]:
+        horario = st.time_input('Horario', step=1800, value=time(12,00),key='form_hora')
+
+    cols = st.columns(2)
+    with cols[0]:
+        estado = st.selectbox(label="Estado", options=['RS'], index=0, disabled=True, key="form_estado")
+    with cols[1]:
+        cidade = st.selectbox(label="Cidade", options=CIDADES_RS_EVENTO, accept_new_options=False, index=None, key='form_cidade')
 
     enviado = st.form_submit_button("Adicionar", type='primary')
 

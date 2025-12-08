@@ -1,6 +1,11 @@
 import streamlit as st
 from collections import defaultdict
 
+st.set_page_config(
+    page_title="Meu guarda roupas",
+    page_icon="👗"
+)
+
 if "guarda_roupas" in st.session_state and st.session_state.guarda_roupas:
     st.title("Prendas registradas")
 
@@ -23,12 +28,21 @@ if "guarda_roupas" in st.session_state and st.session_state.guarda_roupas:
     for cat in sorted(prendas_por_categoria.keys()):
         st.subheader(cat)
 
-        for prenda in prendas_por_categoria[cat]:
-            with st.container(border=True):
-                st.image(prenda.imagem)
-                st.text(prenda)
+        cols = st.columns(3)
+
+        for i, prenda in enumerate(prendas_por_categoria[cat]):
+            col = i % 3
+            try:
+                with cols[col]:
+                    with st.container(border=True):
+                        st.image(prenda.imagem)
+            except IndexError:
+                raise(f"Columna fuera de rango: {col}")
 
 else:
-    st.title("Seu guarda roupas está vazío")
-    st.page_link('pages/02_Nova_prenda_+.py', label="Registrar nova prenda")
+    st.title("Seu guarda roupas está vazío 🪹")
+
+    adicionar_prenda = st.button("Registrar nova prenda ➕", type='primary')
+    if adicionar_prenda:
+        st.switch_page('pages/02_Nova_prenda_+.py')
 

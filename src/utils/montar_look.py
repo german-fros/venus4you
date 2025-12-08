@@ -1,14 +1,20 @@
 import random
 
 def montar_look(prendas_por_parte):
-        # temp_evento = clima_evento['temperature']
-        # prob_chuva =clima_evento['precipitation_probability']
+    look = []
+    usar_vestido = False
 
-        look = []
+    # Primer loop: elegir prendas normalmente
+    for parte in sorted(prendas_por_parte.keys()):
+        
+        if usar_vestido and parte == "2I":
+            continue
 
-        for parte in prendas_por_parte.keys():
-            prenda = random.choice(prendas_por_parte[parte])
+        prenda = random.choice(prendas_por_parte[parte])
 
-            look.append(prenda)
+        if prenda.categoria == "VESTIDOS":
+            usar_vestido = True
 
-        return look
+        look.append(prenda)
+
+    return look
